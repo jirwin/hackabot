@@ -1,0 +1,18 @@
+#!/usr/bin/env python
+##HACKABOT_HELP##
+# Copy buffer check! 
+# Randomly announces to the channel a copy-buffer check.
+##HACKABOT_HELP##
+
+import re
+import hackabot
+from hackabot.client import Client
+import random
+
+hbc = Client()
+msg = hbc.readline()
+nick = hbc.sent_by()
+
+num = random.randint(1, 1000)
+if num == 42:
+  print "send DING DING DING!!! Clipboard Check!!!"

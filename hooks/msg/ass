@@ -1,0 +1,24 @@
+#!/usr/bin/env python
+##HACKABOT_HELP##
+# Looks up wow items on wowhead. 
+# [item name]
+##HACKABOT_HELP##
+
+import urllib
+import re
+import sys
+import amara
+import hackabot
+from hackabot.client import Client
+
+
+hbc = Client()
+msg = hbc.readline()
+nick = hbc.sent_by()
+
+if re.search(r'(\w+)-ass (\w+)', msg, re.IGNORECASE):
+  c = re.search(r'(\w+)-ass (\w+)', msg, re.IGNORECASE)
+  adj = c.group(1)
+  noun = c.group(2)
+
+  print "send %s meant to say: %s ass-%s?" % (nick, adj, noun)

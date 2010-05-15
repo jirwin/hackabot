@@ -1,0 +1,29 @@
+#!/usr/bin/env python
+##HACKABOT_HELP##
+# Looks up wow items on wowhead. 
+# [item name]
+##HACKABOT_HELP##
+
+import urllib
+import re
+import sys
+import amara
+import hackabot
+from hackabot.client import Client
+
+
+hbc = Client()
+msg = hbc.readline()
+nick = hbc.sent_by()
+
+if re.search(r'madness', msg, re.IGNORECASE):
+	print "sendnext\n"
+	print "               MADNESS?!        "
+	print "      o   THIS IS SPARTAAAAA!   "
+	print "     /|__                       "        
+	print "      |       >--/o             "                
+	print " [][][][]               [][][][]"
+	print " [][][][]               [][][][]"
+	print " [][][][]               [][][][]"
+
+

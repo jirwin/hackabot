@@ -1,0 +1,72 @@
+#!/usr/bin/perl
+
+############################################################
+# A small little hook to parse the channel chat for URLs   #
+# and make Tinyurls out of them. As requested by cshields. #
+############################################################
+
+use URI::Find::Rule;
+use LWP::Simple;
+use HTML::TokeParser;
+use Time::localtime;
+use Hackabot::Client;
+use XML::Simple;
+
+my $hbc = Hackabot::Client->new;
+my $conf = $hbc->{'conf'}->{'commands'}->{'bitly'};
+my $login = $bitlycfg->{'username'};
+my $api_key = $bitlycfg->{'api_key'};
+
+sub bitly_link { 
+  my $url = shift;
+  $url =~ s/([^A-Za-z0-9])/sprintf("%%%02X", ord($1))/seg;
+  return get("http://api.bit.ly/v3/shorten?login=jirwin&apikey=R_eb7577dcca4be173176f2925114a84bf&uri=$url&format=txt");
+}
+
+
+sub add_rss_url {
+  my $url = shift;
+  my $author = shift;
+  my $title = shift;
+  my $chan = shift;
+  my ($hbc, $dbh, $sth);
+  
+  $hbc = Hackabot::Client->new;
+  $dbh = $hbc->dbi() or die "Failed to connect to db\n";
+	
+  $url    = $dbh->quote($url);
+  $author = $dbh->quote($author);
+  $chan   = $dbh->quote($chan);
+  $title  = $dbh->quote($title);
+  
+  $dbh->do("INSERT INTO rss_feeds (url,title,author,channel) VALUES ($url,$title,$author,$chan)") or die "DB stuff died. " . $dbh->errstr . "\n";
+  
+  $dbh->disconnect;
+}
+
+sub check_url {
+  my $url = shift;
+
+  $hbc = Hackabot::Client->new;
+  $dbh = $hbc->dbi() or die "Failed to connect to db\n";
+
+  $url = $dbs->quote($url);
+
+  $dbh->do("SELECT url FROM rss_feeds WHERE url=$url") or die "DB stuff died." . $dbh->errstr . "\n";
+}
+
+my $msg = $hbc->readline;
+my $nick = $hbc->sent_by;
+my $chan = $hbc->channel;
+
+my @urls = URI::Find::Rule->in($msg,1);
+if(@urls){
+	foreach $url (@urls){
+    $short_url = bitly_link($url->as_string);
+    $content = get($url);
+    $parser = HTML::TokeParser->new(\$content);
+    $parser->get_tag("title");
+    $title = $parser->get_trimmed_text;
+    print "send " . $title . " - " . $short_url . "]\n";
+  }
+}

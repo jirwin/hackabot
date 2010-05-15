@@ -1,0 +1,41 @@
+#!/usr/bin/env python
+##HACKABOT_HELP##
+# Looks up wow items on wowhead. 
+# [item name]
+##HACKABOT_HELP##
+
+import urllib
+import re
+import sys
+import amara
+import hackabot
+from hackabot.client import Client
+
+
+hbc = Client()
+msg = hbc.readline()
+nick = hbc.sent_by()
+
+if re.match(r'\[(.+)\]', msg):
+  c = re.match(r'\[(.*)\]', msg)
+  item = c.group(1)
+
+  params = urllib.urlencode({'item': item})
+  
+  xml = amara.parse("http://www.wowhead.com/?%s&xml" % params)
+
+  try:
+    if xml.wowhead.item.quality == "Epic":
+      print "send \0036[%s]\003 : %s" % (xml.wowhead.item.name, xml.wowhead.item.link)
+    elif xml.wowhead.item.quality == "Rare":
+      print "send \00312[%s]\003 : %s" % (xml.wowhead.item.name, xml.wowhead.item.link)
+    elif xml.wowhead.item.quality == "Uncommon":
+      print "send \0039[%s]\003 : %s" % (xml.wowhead.item.name, xml.wowhead.item.link)
+    elif xml.wowhead.item.quality == "Common":
+      print "send \00316[%s]\003 : %s" % (xml.wowhead.item.name, xml.wowhead.item.link)
+    elif xml.wowhead.item.quality == "Poor":
+      print "send \00314[%s]\003 : %s" % (xml.wowhead.item.name, xml.wowhead.item.link)
+    elif xml.wowhead.item.quality == "Legendary":
+      print "send \0037[%s]\003 : %s" % (xml.wowhead.item.name, xml.wowhead.item.link)
+  except:
+    pass

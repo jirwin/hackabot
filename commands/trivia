@@ -1,0 +1,30 @@
+#!/usr/bin/env python
+
+##HACKABOT_HELP##
+# Mirwinbot Trivia
+##HACKABOT_HELP##
+
+import MySQLdb
+
+import hackabot
+from hackabot.client import Client
+
+def get_dbh(config):
+  """
+  Return a mysqldb connection
+  """
+
+  try:
+    return MySQLdb.connect(host=config.get('hostname'), db=config.get('database'),
+                           user=config.get('username'), passwd=config.get('password'))
+  except MySQLdb.Error, (errno, errstr):
+      raise DBError("DB connection failed: [%s] %s" % (errno, errstr))
+  
+
+hbc = Client()
+dbh = get_dbh(hbc.conf.find('database')
+
+msg = hbc.readline()
+
+print "send %s" % msg
+ 

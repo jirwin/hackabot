@@ -50,7 +50,7 @@ def main():
       for each in cur:
         print "  {0}: {1}".format(each[1],each[0])
     
-  elif msg[0:3] == "new":
+  elif msg[0:4] == "new ":
     #start a new poll
     cur.execute("INSERT INTO votes (creator, poll, created, channel) VALUES (%s,%s,NOW(),%s);", (nick, msg[4:], chan))
     print "send New poll created, start your votes!"

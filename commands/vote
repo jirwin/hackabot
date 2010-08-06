@@ -29,7 +29,7 @@ def main():
   chan = hbc.channel()
 
   cur = dbh.cursor()
-  cur.execute("SELECT id, creator, poll, created FROM votes WHERE channel = ? ORDER BY id DESC LIMIT 1;", chan)
+  cur.execute("SELECT id, creator, poll, created FROM votes WHERE channel = %s ORDER BY id DESC LIMIT 1;", (chan,))
 
   empty = False
 
@@ -45,22 +45,22 @@ def main():
     else:
       print "sendnext"
       print "Current poll: {0}".format(poll)
-      cur.execute("SELECT count(id) AS count, choice FROM vote_choices WHERE vote = ? AND channel = ? GROUP BY choice ORDER BY count DESC;", id, chan)
+      cur.execute("SELECT count(id) AS count, choice FROM vote_choices WHERE vote = %s AND channel = %s GROUP BY choice ORDER BY count DESC;", (id, chan,))
       for each in cur:
         print "  {0}: {1}".format(each[1],each[0])
     
   elif msg[0:3] == "new":
     #start a new poll
-    cur.execute("INSERT INTO vote (creator, poll, created, channel) VALUES (?,?,NOW(),?);", nick, msg[4:], chan)
+    cur.execute("INSERT INTO vote (creator, poll, created, channel) VALUES (%s,%s,NOW(),%s);", (nick, msg[4:], chan,))
     print "send New poll created, start your votes!"
 
   else:
     if empty:
       print "send No poll!"
     else:
-      cur.execute("UPDATE vote_choices SET choice = ? WHERE voter = ? AND channel = ? AND vote = ?;", msg, nick, chan, id)
+      cur.execute("UPDATE vote_choices SET choice = %s WHERE voter = %s AND channel = %s AND vote = %s;", (msg, nick, chan, id,))
       if cur.rowcount == 0:
-        cur.execute("INSERT INTO vote_choices (vote, choice, voter, channel) VALUES (?,?,?,?);", id, msg, nick, chan)
+        cur.execute("INSERT INTO vote_choices (vote, choice, voter, channel) VALUES (%s,%s,%s,%s);", (id, msg, nick, chan,))
         print "send Vote accepted."
       else:
         print "send Vote changed."

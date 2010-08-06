@@ -46,7 +46,7 @@ def main():
       print "send No poll!"
     else:
       out = "send Current poll: {0}"
-      cur.execute("SELECT count(id) as count, choice FROM vote_choices WHERE vote = ? AND channel = ? GROUP BY choice;", id, chan)
+      cur.execute("SELECT count(id) AS count, choice FROM vote_choices WHERE vote = ? AND channel = ? GROUP BY choice ORDER BY count DESC;", id, chan)
       for each in cur:
         out += "\n  {0}: {1}".format(each[1],each[0])
       print out

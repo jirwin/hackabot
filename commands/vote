@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+
+##HACKABOT_HELP##
+# Mirwinbot Vote System
+# usage:
+#  !vote new <topic> | !vote <choice> | !vote
+##HACKABOT_HELP##
+
+import MySQLdb
+
+import hackabot
+from hackabot.client import Client
+
+def get_dbh(config):
+  """
+  Return a mysqldb connection
+  """
+
+  try:
+    return MySQLdb.connect(host=config.get('hostname'), db=config.get('database'),
+                           user=config.get('username'), passwd=config.get('password'))
+  except MySQLdb.Error, (errno, errstr):
+      raise DBError("DB connection failed: [%s] %s" % (errno, errstr))
+
+def main():  
+  hbc = Client()
+  dbh = get_dbh(hbc.conf.find('database'))
+  
+  msg = hbc.readline()
+  nick = hbc.sent_by()
+  chan = hbc.channel()
+
+  cur = dbh.cursor()
+  cur.execute("SELECT id, creator, poll, created FROM votes WHERE channel = ? ORDER BY id DESC LIMIT 1;", chan)
+
+  empty = False
+
+  if cur.rowcount != 0:
+    (id, creator, poll, created) = cur.fetchone()
+  else:
+    empty = True
+
+  if not msg:
+    #Just print out the current vote
+    if empty:
+      print "send No poll!"
+    else:
+      out = "send Current poll: {0}"
+      cur.execute("SELECT count(id) as count, choice FROM vote_choices WHERE vote = ? AND channel = ? GROUP BY choice;", id, chan)
+      for each in cur:
+        out += "\n  {0}: {1}".format(each[1],each[0])
+      print out
+    
+  elif msg[0:3] == "new":
+    #start a new poll
+    cur.execute("INSERT INTO vote (creator, poll, created, channel) VALUES (?,?,NOW(),?);", nick, msg[4:], chan)
+    print "send New poll created, start your votes!"
+
+  else:
+    if empty:
+      print "send No poll!"
+    else:
+      cur.execute("UPDATE vote_choices SET choice = ? WHERE voter = ? AND channel = ? AND vote = ?;", msg, nick, chan, id)
+      if cur.rowcount == 0:
+        cur.execute("INSERT INTO vote_choices (vote, choice, voter, channel) VALUES (?,?,?,?);", id, msg, nick, chan)
+        print "send Vote accepted."
+      else:
+        print "send Vote changed."

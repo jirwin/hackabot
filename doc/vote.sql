@@ -1,0 +1,2 @@
+CREATE TABLE votes (id SERIAL, creator VARCHAR(255), poll VARCHAR(2048), created TIMESTAMP, channel VARCHAR(255));
+CREATE TABLE vote_choices (id SERIAL, vote BIGINT, choice VARCHAR(2048), voter varchar(255), channel VARCHAR(255));

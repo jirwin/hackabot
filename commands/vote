@@ -7,7 +7,6 @@
 ##HACKABOT_HELP##
 
 import MySQLdb
-
 import hackabot
 from hackabot.client import Client
 
@@ -15,7 +14,6 @@ def get_dbh(config):
   """
   Return a mysqldb connection
   """
-
   try:
     return MySQLdb.connect(host=config.get('hostname'), db=config.get('database'),
                            user=config.get('username'), passwd=config.get('password'))
@@ -23,7 +21,7 @@ def get_dbh(config):
       raise DBError("DB connection failed: [%s] %s" % (errno, errstr))
 
 def main():  
-  hbc = Client()
+  hbc = Client('etc/hacakbot.xml')
   dbh = get_dbh(hbc.conf.find('database'))
   
   msg = hbc.readline()
@@ -68,4 +66,4 @@ def main():
         print "send Vote changed."
 
 if __name__ == "__main__":
-    main()
+  main()

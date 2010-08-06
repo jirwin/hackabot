@@ -52,7 +52,7 @@ def main():
     
   elif msg[0:3] == "new":
     #start a new poll
-    cur.execute("INSERT INTO vote (creator, poll, created, channel) VALUES (%s,%s,NOW(),%s);", (nick, msg[4:], chan,))
+    cur.execute("INSERT INTO votes (creator, poll, created, channel) VALUES (%s,%s,NOW(),%s);", (nick, msg[4:], chan,))
     print "send New poll created, start your votes!"
 
   else:

@@ -66,3 +66,6 @@ def main():
         print "send Vote accepted."
       else:
         print "send Vote changed."
+
+if __name__ == "__main__":
+    main()

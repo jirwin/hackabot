@@ -21,9 +21,9 @@ def get_dbh(config):
       raise DBError("DB connection failed: [%s] %s" % (errno, errstr))
 
 def main():  
-  hbc = Client('etc/hacakbot.xml')
+  hbc = Client()
   dbh = get_dbh(hbc.conf.find('database'))
-  
+
   msg = hbc.readline()
   nick = hbc.sent_by()
   chan = hbc.channel()
@@ -44,7 +44,7 @@ def main():
       print "send No poll!"
     else:
       print "sendnext"
-      print "Current poll: {0}"
+      print "Current poll: {0}".format(poll)
       cur.execute("SELECT count(id) AS count, choice FROM vote_choices WHERE vote = ? AND channel = ? GROUP BY choice ORDER BY count DESC;", id, chan)
       for each in cur:
         print "  {0}: {1}".format(each[1],each[0])

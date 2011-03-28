@@ -29,7 +29,7 @@ def main():
   nick = hbc.sent_by()
   chan = hbc.channel()
 
-  msg = " ".join(filter(lambda x: x, msg.split(' ')))
+  msg = " ".join(msg.split())
 
   cur = dbh.cursor()
   cur.execute("SELECT id, creator, poll, created FROM votes WHERE channel = %s ORDER BY id DESC LIMIT 1;", (chan,))

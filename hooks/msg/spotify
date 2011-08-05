@@ -1,16 +1,22 @@
 #!/usr/bin/env python
+##HACKABOT_HELP##
+# Looks up spotify info
+# spotify:
+##HACKABOT_HELP##
+
 import json
 import urllib2
 import re
 import hackabot
 from hackabot.client import Client
 
-hcb = Client()
+hbc = Client()
 msg = hbc.readline()
 
 spotibase = "http://ws.spotify.com/lookup/1/.json?uri="
 so = re.search("(spotify\:[A-Za-z0-9:]+)", msg)
-if msg:
+
+if so:
     spotilink = so.groups()[0]
 
     fh = urllib2.urlopen(spotibase + spotilink)

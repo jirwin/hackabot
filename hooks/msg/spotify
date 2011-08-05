@@ -1,0 +1,37 @@
+#!/usr/bin/env python
+import json
+import urllib2
+import re
+import hackabot
+from hackabot.client import Client
+
+hcb = Client()
+msg = hbc.readline()
+
+spotibase = "http://ws.spotify.com/lookup/1/.json?uri="
+so = re.search("(spotify\:[A-Za-z0-9:]+)", msg)
+if msg:
+    spotilink = so.groups()[0]
+
+    fh = urllib2.urlopen(spotibase + spotilink)
+    data = json.load(fh)
+    fh.close()
+
+    if data['info']['type'] == 'track':
+        info = "send {0} - {1} from {2} ({3})".format(
+            ", ".join([x['name'] for x in data['track']['artists']]),
+            data['track']['name'],
+            data['track']['album']['name'],
+            data['track']['album']['released'])
+
+    elif data['info']['type'] == 'album':
+        info = "send {0}'s {1} ({2})".format(
+            data['album']['artist'],
+            data['album']['name'],
+            data['album']['released']);
+
+    elif data['info']['type'] == 'artist':
+        info = "send {0}".format(
+            data['artist']['name'])
+        
+    print info

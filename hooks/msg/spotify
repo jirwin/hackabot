@@ -24,7 +24,7 @@ if so:
     fh.close()
 
     if data['info']['type'] == 'track':
-        info = "send {0} - {1} from {2} ({3})".format(
+        info = "send {0} - {1} [{2} ({3})]".format(
             ", ".join([x['name'] for x in data['track']['artists']]),
             data['track']['name'],
             data['track']['album']['name'],

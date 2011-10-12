@@ -1,0 +1,42 @@
+#!/usr/bin/env python
+
+##HACKABOT_HELP##
+# Mirwinbot Dice Master
+# usage:
+#  !roll | !roll #d#
+# default rolls 1d6
+##HACKABOT_HELP##
+
+import hackabot
+from hackabot.client import Client
+import re
+import random
+
+pat = re.compile("(\d+)d(\d+)")
+
+def main():  
+  hbc = Client()
+  
+  msg = hbc.readline()
+  #nick = hbc.sent_by()
+  chan = hbc.channel()
+
+  msg = " ".join(msg.split())
+
+  count = 1
+  sides = 6
+
+  match = pat.match(msg)
+
+  if match:
+    (count, sides) = match.groups()
+
+  sum = 0
+
+  for i in range (0,int(count)):
+    sum += (random.choice(range(0,int(sides))) + 1)
+
+  print "send Roll result: %d" % (sum)
+
+if __name__ == "__main__":
+  main()
